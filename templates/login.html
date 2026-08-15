@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Login</title>
+
+<style>
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================================
+   BODY
+========================================= */
+
+body {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: #eef5fb;
+
+    padding: 15px;
+}
+
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.login-container {
+
+    width: 100%;
+
+    max-width: 400px;
+
+    background: white;
+
+    border: 1px solid #c5c5c5;
+
+    padding: 25px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,0.12);
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.title {
+
+    text-align: center;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   LOGIN TYPE BUTTONS
+========================================= */
+
+.login-types {
+
+    display: flex;
+
+    gap: 5px;
+
+    margin-bottom: 20px;
+}
+
+
+.login-type {
+
+    flex: 1;
+
+    height: 38px;
+
+    border: 1px solid #aaa;
+
+    background: #e8eef3;
+
+    color: #244b6b;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.login-type:hover {
+
+    background: #d8e7f2;
+}
+
+
+.login-type.active {
+
+    background: #4b9bd0;
+
+    border-color: #397aaa;
+
+    color: white;
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+label {
+
+    display: block;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    color: #444;
+
+    margin-bottom: 5px;
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.input-box {
+
+    width: 100%;
+
+    height: 40px;
+
+    border: 1px solid #aaa;
+
+    padding: 0 10px;
+
+    font-size: 12px;
+
+    outline: none;
+
+    margin-bottom: 15px;
+}
+
+
+.input-box:focus {
+
+    border-color: #4b9bd0;
+}
+
+
+/* =========================================
+   LOGIN BUTTON
+========================================= */
+
+.login-button {
+
+    width: 100%;
+
+    height: 40px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+.login-button:hover {
+
+    background: #357fae;
+}
+
+
+.login-button:disabled {
+
+    background: #999;
+
+    border-color: #888;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.message {
+
+    display: none;
+
+    padding: 9px;
+
+    margin-bottom: 15px;
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+
+.message.error {
+
+    display: block;
+
+    background: #f9e1e1;
+
+    border: 1px solid #d49a9a;
+
+    color: #9b2222;
+}
+
+
+.message.success {
+
+    display: block;
+
+    background: #e1f3e5;
+
+    border: 1px solid #9ac9a3;
+
+    color: #256333;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:500px) {
+
+    .login-container {
+
+        padding: 18px;
+    }
+
+    .login-type {
+
+        font-size: 9px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-container">
+
+
+    <div class="title">
+
+        LOGIN
+
+    </div>
+
+
+    <!-- =================================
+         LOGIN TYPES
+    ================================== -->
+
+    <div class="login-types">
+
+        <button
+            class="login-type active"
+            id="lecturerButton"
+            onclick="selectRole('lecturer')">
+
+            LECTURER LOGIN
+
+        </button>
+
+
+        <button
+            class="login-type"
+            id="studentButton"
+            onclick="selectRole('student')">
+
+            STUDENT LOGIN
+
+        </button>
+
+
+        <button
+            class="login-type"
+            id="adminButton"
+            onclick="selectRole('admin')">
+
+            ADMIN LOGIN
+
+        </button>
+
+    </div>
+
+
+    <!-- =================================
+         MESSAGE
+    ================================== -->
+
+    <div
+        id="message"
+        class="message">
+
+    </div>
+
+
+    <!-- =================================
+         USERNAME
+    ================================== -->
+
+    <label for="username">
+
+        USERNAME
+
+    </label>
+
+
+    <input
+        type="text"
+        id="username"
+        class="input-box"
+        placeholder="Enter username"
+        autocomplete="username">
+
+
+    <!-- =================================
+         PASSWORD
+    ================================== -->
+
+    <label for="password">
+
+        PASSWORD
+
+    </label>
+
+
+    <input
+        type="password"
+        id="password"
+        class="input-box"
+        placeholder="Enter password"
+        autocomplete="current-password">
+
+
+    <!-- =================================
+         LOGIN
+    ================================== -->
+
+    <button
+        id="loginButton"
+        class="login-button"
+        onclick="login()">
+
+        LOGIN
+
+    </button>
+
+
+</div>
+
+
+<script>
+
+/* =========================================
+   CURRENT ROLE
+========================================= */
+
+let selectedRole = "lecturer";
+
+
+/* =========================================
+   SELECT ROLE
+========================================= */
+
+function selectRole(role) {
+
+    selectedRole = role;
+
+
+    document
+        .getElementById("lecturerButton")
+        .classList.remove("active");
+
+
+    document
+        .getElementById("studentButton")
+        .classList.remove("active");
+
+
+    document
+        .getElementById("adminButton")
+        .classList.remove("active");
+
+
+    if (role === "lecturer") {
+
+        document
+            .getElementById("lecturerButton")
+            .classList.add("active");
+
+    }
+
+
+    else if (role === "student") {
+
+        document
+            .getElementById("studentButton")
+            .classList.add("active");
+
+    }
+
+
+    else if (role === "admin") {
+
+        document
+            .getElementById("adminButton")
+            .classList.add("active");
+
+    }
+
+
+    clearMessage();
+
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById("message");
+
+
+    message.textContent = text;
+
+
+    message.className =
+        "message " + type;
+
+}
+
+
+function clearMessage() {
+
+    const message =
+        document.getElementById("message");
+
+
+    message.textContent = "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+async function login() {
+
+    const username =
+        document
+            .getElementById("username")
+            .value
+            .trim();
+
+
+    const password =
+        document
+            .getElementById("password")
+            .value;
+
+
+    const button =
+        document
+            .getElementById("loginButton");
+
+
+    if (!username) {
+
+        showMessage(
+            "Please enter username.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!password) {
+
+        showMessage(
+            "Please enter password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent = "CHECKING...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/login",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            username:
+                                username,
+
+                            password:
+                                password,
+
+                            role:
+                                selectedRole
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            showMessage(
+
+                result.message ||
+                "Invalid username or password.",
+
+                "error"
+
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Login successful.",
+            "success"
+        );
+
+
+        /*
+         * Flask gives us the correct
+         * redirect URL.
+         */
+
+        setTimeout(
+            function() {
+
+                window.location.href =
+                    result.redirect;
+
+            },
+            300
+        );
+
+    }
+
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to connect to server.",
+            "error"
+        );
+
+    }
+
+
+    finally {
+
+        button.disabled = false;
+
+        button.textContent = "LOGIN";
+
+    }
+
+}
+
+
+/* =========================================
+   ENTER KEY
+========================================= */
+
+document
+    .getElementById("password")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                login();
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

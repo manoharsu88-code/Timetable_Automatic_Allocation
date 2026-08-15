@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Subject Management</title>
+
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: Arial, sans-serif;
+
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    min-height: 100vh;
+
+    background: #eef5fb;
+
+    color: #222;
+
+    padding: 15px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.page-title {
+
+    background: white;
+
+    border: 1px solid #c2d4e5;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card {
+
+    background: white;
+
+    border: 1px solid #c5c5c5;
+
+    padding: 20px;
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.form-section {
+
+    display: flex;
+
+    gap: 10px;
+
+    align-items: flex-start;
+
+    margin-bottom: 20px;
+
+}
+
+
+.input-wrapper {
+
+    flex: 1;
+
+    position: relative;
+
+}
+
+
+.input-wrapper input {
+
+    width: 100%;
+
+    height: 38px;
+
+    border: 1px solid #aaa;
+
+    padding: 0 10px;
+
+    font-size: 12px;
+
+    outline: none;
+
+}
+
+
+.input-wrapper input:focus {
+
+    border-color: #4a91c7;
+
+}
+
+
+/* =====================================================
+   SAVE
+===================================================== */
+
+.save-button {
+
+    width: 80px;
+
+    height: 38px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.save-button:hover {
+
+    background: #357fae;
+
+}
+
+
+.save-button:disabled {
+
+    background: #999;
+
+    border-color: #888;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   SUGGESTIONS
+===================================================== */
+
+.suggestions {
+
+    position: absolute;
+
+    left: 0;
+
+    right: 0;
+
+    top: 40px;
+
+    background: white;
+
+    border: 1px solid #bbb;
+
+    z-index: 100;
+
+    max-height: 200px;
+
+    overflow-y: auto;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,0.15);
+
+}
+
+
+.suggestion {
+
+    padding: 9px 10px;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #eee;
+
+}
+
+
+.suggestion:hover {
+
+    background: #dceefa;
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.message {
+
+    display: none;
+
+    padding: 9px;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+
+}
+
+
+.message.success {
+
+    display: block;
+
+    background: #e1f3e5;
+
+    border: 1px solid #9ac9a3;
+
+    color: #256333;
+
+}
+
+
+.message.error {
+
+    display: block;
+
+    background: #f9e1e1;
+
+    border: 1px solid #d49a9a;
+
+    color: #9b2222;
+
+}
+
+
+/* =====================================================
+   TABLE WRAPPER
+===================================================== */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.subject-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 11px;
+
+}
+
+
+.subject-table th {
+
+    background: #d7e6f2;
+
+    border: 1px solid #aaa;
+
+    padding: 9px;
+
+    color: #244b6b;
+
+    text-align: center;
+
+}
+
+
+.subject-table td {
+
+    border: 1px solid #aaa;
+
+    padding: 8px;
+
+    text-align: center;
+
+}
+
+
+.subject-table tr:nth-child(even) {
+
+    background: #f7f7f7;
+
+}
+
+
+.subject-table tr:hover {
+
+    background: #eaf4fc;
+
+}
+
+
+/* =====================================================
+   LAB
+===================================================== */
+
+.lab-value {
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.action-button {
+
+    padding: 5px 10px;
+
+    border: none;
+
+    color: white;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    margin: 2px;
+
+    border-radius: 2px;
+
+}
+
+
+.update-button {
+
+    background: #4b9bd0;
+
+    border: 1px solid #397aaa;
+
+}
+
+
+.update-button:hover {
+
+    background: #357fae;
+
+}
+
+
+.delete-button {
+
+    background: #d9534f;
+
+    border: 1px solid #b44343;
+
+}
+
+
+.delete-button:hover {
+
+    background: #b93632;
+
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading {
+
+    text-align: center;
+
+    padding: 20px;
+
+    color: #777;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:600px) {
+
+    body {
+
+        padding: 8px;
+
+    }
+
+
+    .card {
+
+        padding: 10px;
+
+    }
+
+
+    .form-section {
+
+        flex-direction: column;
+
+    }
+
+
+    .input-wrapper {
+
+        width: 100%;
+
+    }
+
+
+    .save-button {
+
+        width: 100%;
+
+    }
+
+
+    .subject-table {
+
+        min-width: 650px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =================================================
+     TITLE
+================================================= -->
+
+<div class="page-title">
+
+    SUBJECT ALLOCATION TO A SECTION
+
+</div>
+
+
+<div class="card">
+
+
+<!-- =================================================
+     MESSAGE
+================================================= -->
+
+<div id="message"
+     class="message">
+
+</div>
+
+
+<!-- =================================================
+     FORM
+================================================= -->
+
+<div class="form-section">
+
+
+    <!-- SUBJECT -->
+
+    <div class="input-wrapper">
+
+        <input
+            type="text"
+            id="subjectInput"
+            placeholder="Enter subject"
+            autocomplete="off">
+
+        <div
+            id="subjectSuggestions"
+            class="suggestions"
+            style="display:none;">
+
+        </div>
+
+    </div>
+
+
+    <!-- SECTION -->
+
+    <div class="input-wrapper">
+
+        <input
+            type="text"
+            id="sectionInput"
+            placeholder="Enter section"
+            autocomplete="off">
+
+        <div
+            id="sectionSuggestions"
+            class="suggestions"
+            style="display:none;">
+
+        </div>
+
+    </div>
+
+
+    <!-- SAVE -->
+
+    <button
+        id="saveButton"
+        class="save-button"
+        onclick="saveSubject()">
+
+        SAVE
+
+    </button>
+
+
+</div>
+
+
+<!-- =================================================
+     TABLE
+================================================= -->
+
+<div class="table-wrapper">
+
+<table class="subject-table">
+
+
+<thead>
+
+<tr>
+
+    <th>ID</th>
+
+    <th>SUBJECT</th>
+
+    <th>SECTION</th>
+
+    <th>LOCATION CODE</th>
+
+    <th>ACTION</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="subjectList">
+
+</tbody>
+
+
+</table>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let subjects = [];
+
+let sections = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text, type) {
+
+    const box =
+        document.getElementById(
+            "message"
+        );
+
+
+    box.textContent = text;
+
+
+    box.className =
+        "message " + type;
+
+
+    setTimeout(function() {
+
+        box.className =
+            "message";
+
+    }, 6000);
+
+}
+
+
+/* =====================================================
+   LOAD SUGGESTIONS
+===================================================== */
+
+async function loadSuggestions() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/subjects/suggestions"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load suggestions"
+            );
+
+        }
+
+
+        subjects =
+            data.subjects || [];
+
+
+        sections =
+            data.sections || [];
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to load suggestions.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SUBJECT INPUT
+===================================================== */
+
+document
+    .getElementById("subjectInput")
+    .addEventListener(
+        "input",
+        function() {
+
+            showSuggestions(
+                "subject"
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   SECTION INPUT
+===================================================== */
+
+document
+    .getElementById("sectionInput")
+    .addEventListener(
+        "input",
+        function() {
+
+            showSuggestions(
+                "section"
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   SHOW SUGGESTIONS
+===================================================== */
+
+function showSuggestions(type) {
+
+    let input;
+
+    let box;
+
+    let data;
+
+
+    if (type === "subject") {
+
+        input =
+            document.getElementById(
+                "subjectInput"
+            );
+
+        box =
+            document.getElementById(
+                "subjectSuggestions"
+            );
+
+        data = subjects;
+
+    }
+
+    else {
+
+        input =
+            document.getElementById(
+                "sectionInput"
+            );
+
+        box =
+            document.getElementById(
+                "sectionSuggestions"
+            );
+
+        data = sections;
+
+    }
+
+
+    const value =
+        input.value
+            .trim()
+            .toLowerCase();
+
+
+    box.innerHTML = "";
+
+
+    if (!value) {
+
+        box.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    const filtered =
+        data.filter(
+            function(item) {
+
+                return item
+                    .toLowerCase()
+                    .startsWith(value);
+
+            }
+        );
+
+
+    if (!filtered.length) {
+
+        box.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    filtered.forEach(
+        function(item) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "suggestion";
+
+
+            div.textContent =
+                item;
+
+
+            div.onclick =
+                function() {
+
+                    input.value =
+                        item;
+
+                    box.style.display =
+                        "none";
+
+                };
+
+
+            box.appendChild(div);
+
+        }
+    );
+
+
+    box.style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+document
+    .getElementById("subjectInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                saveSubject();
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById("sectionInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                saveSubject();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   SAVE SUBJECT
+===================================================== */
+
+async function saveSubject() {
+
+    const subjectInput =
+        document.getElementById(
+            "subjectInput"
+        );
+
+
+    const sectionInput =
+        document.getElementById(
+            "sectionInput"
+        );
+
+
+    const button =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    const subject =
+        subjectInput.value.trim();
+
+
+    const section =
+        sectionInput.value.trim();
+
+
+    /* -----------------------------------------------
+       VALIDATION
+    ------------------------------------------------ */
+
+    if (!subject) {
+
+        showMessage(
+            "Please enter a subject.",
+            "error"
+        );
+
+        subjectInput.focus();
+
+        return;
+
+    }
+
+
+    if (!section) {
+
+        showMessage(
+            "Please enter a section.",
+            "error"
+        );
+
+        sectionInput.focus();
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "SAVING";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/subjects",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            subject:
+                                subject,
+
+                            section_name:
+                                section
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        /* -------------------------------------------
+           ERROR
+        -------------------------------------------- */
+
+        if (!response.ok) {
+
+            showMessage(
+                result.message ||
+                "Unable to save subject.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------
+           SUCCESS
+        -------------------------------------------- */
+
+        showMessage(
+
+            "Subject saved successfully. " +
+
+            "LAB: " +
+
+            (
+                result.lab || 0
+            ),
+
+            "success"
+
+        );
+
+
+        subjectInput.value = "";
+
+        sectionInput.value = "";
+
+
+        hideSuggestions();
+
+
+        /* Reload */
+
+        await loadSuggestions();
+
+        await loadSubjects();
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Server error while saving subject.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            "SAVE";
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD SUBJECT TABLE
+===================================================== */
+
+async function loadSubjects() {
+
+    const list =
+        document.getElementById(
+            "subjectList"
+        );
+
+
+    try {
+
+        list.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="loading">
+
+                    Loading...
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        const response =
+            await fetch(
+                "/api/subjects"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load subjects"
+            );
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        if (!data.length) {
+
+            list.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty">
+
+                        No subjects created yet.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        data.forEach(
+            function(row) {
+
+                const tr =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                tr.innerHTML = `
+
+                    <td>
+                        ${row.id}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            row.subject
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHTML(
+                            row.section_name
+                        )}
+                    </td>
+
+                    <td class="lab-value">
+                        ${row.lab || 0}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="action-button
+                                   update-button"
+                            onclick=
+                            "updateSubjectLab(
+                                ${row.id}
+                            )">
+
+                            UPDATE
+
+                        </button>
+
+
+                        <button
+                            class="action-button
+                                   delete-button"
+                            onclick=
+                            "deleteSubject(
+                                ${row.id}
+                            )">
+
+                            DELETE
+
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                list.appendChild(tr);
+
+            }
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        list.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="5"
+                    class="empty">
+
+                    Unable to load subjects.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE LAB
+===================================================== */
+
+async function updateSubjectLab(id) {
+
+    const ok =
+        confirm(
+
+            "Update LAB from the current timetable?\n\n" +
+
+            "The system will check every two-digit " +
+            "location against the LAB values of " +
+            "subjects belonging to the same lecturer."
+
+        );
+
+
+    if (!ok) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                "/api/subjects/" +
+                id,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            update_lab:
+                                true
+
+                        })
+
+                }
+
+            );
+
+
+        const result =
+            await response.json();
+
+
+        /* -------------------------------------------
+           CONFLICT
+        -------------------------------------------- */
+
+        if (response.status === 409) {
+
+            alert(
+                result.message ||
+                "Manual update error."
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------
+           OTHER ERROR
+        -------------------------------------------- */
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Unable to update LAB."
+            );
+
+        }
+
+
+        /* -------------------------------------------
+           SUCCESS
+        -------------------------------------------- */
+
+        showMessage(
+
+            "LAB updated successfully: " +
+            (result.lab || 0),
+
+            "success"
+
+        );
+
+
+        await loadSubjects();
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        alert(
+            error.message ||
+            "Unable to update LAB."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DELETE SUBJECT
+===================================================== */
+
+async function deleteSubject(id) {
+
+    const ok =
+        confirm(
+            "Delete this subject?\n\n" +
+            "The subject will also be removed " +
+            "from the timetable of this section."
+        );
+
+
+    if (!ok) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/subjects/" + id,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Unable to delete subject."
+            );
+
+        }
+
+
+        showMessage(
+
+            result.message ||
+            "Subject deleted successfully.",
+
+            "success"
+
+        );
+
+
+        /* Reload subject table */
+
+        await loadSubjects();
+
+
+        /* Reload suggestions */
+
+        await loadSuggestions();
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+
+            error.message ||
+            "Server error while deleting subject.",
+
+            "error"
+
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HIDE SUGGESTIONS
+===================================================== */
+
+function hideSuggestions() {
+
+    document
+        .getElementById(
+            "subjectSuggestions"
+        )
+        .style.display = "none";
+
+
+    document
+        .getElementById(
+            "sectionSuggestions"
+        )
+        .style.display = "none";
+
+}
+
+
+/* =====================================================
+   CLOSE SUGGESTIONS WHEN CLICKING OUTSIDE
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            !event.target.closest(
+                ".input-wrapper"
+            )
+        ) {
+
+            hideSuggestions();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   HTML ESCAPE
+===================================================== */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(value);
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   INITIAL PAGE LOAD
+===================================================== */
+
+window.addEventListener(
+    "load",
+    async function() {
+
+        await loadSuggestions();
+
+        await loadSubjects();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

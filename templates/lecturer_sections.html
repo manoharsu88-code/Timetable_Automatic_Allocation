@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Lecturer Section Allocation</title>
+
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: Arial, sans-serif;
+
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    min-height: 100vh;
+
+    background: #eef5fb;
+
+    color: #222;
+
+    padding: 15px;
+
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.page-title {
+
+    background: white;
+
+    border: 1px solid #c2d4e5;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card {
+
+    background: white;
+
+    border: 1px solid #c5c5c5;
+
+    padding: 20px;
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.message {
+
+    display: none;
+
+    padding: 9px;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+
+}
+
+
+.message.success {
+
+    display: block;
+
+    background: #e1f3e5;
+
+    border: 1px solid #9ac9a3;
+
+    color: #256333;
+
+}
+
+
+.message.error {
+
+    display: block;
+
+    background: #f9e1e1;
+
+    border: 1px solid #d49a9a;
+
+    color: #9b2222;
+
+}
+
+
+/* =====================================================
+   TABLE WRAPPER
+===================================================== */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.lecturer-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 11px;
+
+}
+
+
+.lecturer-table th {
+
+    background: #d7e6f2;
+
+    border: 1px solid #aaa;
+
+    padding: 9px;
+
+    color: #244b6b;
+
+    text-align: center;
+
+}
+
+
+.lecturer-table td {
+
+    border: 1px solid #aaa;
+
+    padding: 8px;
+
+    text-align: center;
+
+}
+
+
+.lecturer-table tr:nth-child(even) {
+
+    background: #f7f7f7;
+
+}
+
+
+.lecturer-table tr:hover {
+
+    background: #eaf4fc;
+
+}
+
+
+/* =====================================================
+   REMOVE BUTTON
+===================================================== */
+
+.remove-button {
+
+    padding: 5px 12px;
+
+    border: 1px solid #b44343;
+
+    background: #d9534f;
+
+    color: white;
+
+    font-size: 10px;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+
+}
+
+
+.remove-button:hover {
+
+    background: #b93632;
+
+}
+
+
+/* =====================================================
+   ENTER BUTTON
+===================================================== */
+
+.enter-button {
+
+    margin-top: 15px;
+
+    width: 90px;
+
+    height: 38px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.enter-button:hover {
+
+    background: #357fae;
+
+}
+
+
+.enter-button:disabled {
+
+    background: #999;
+
+    border-color: #888;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   NULL
+===================================================== */
+
+.null-value {
+
+    color: #999;
+
+    font-style: italic;
+
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+#resultSection {
+
+    display: none;
+
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.back-button {
+
+    margin-top: 15px;
+
+    width: 90px;
+
+    height: 35px;
+
+    border: 1px solid #888;
+
+    background: #777;
+
+    color: white;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+}
+
+
+.back-button:hover {
+
+    background: #555;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:600px) {
+
+    body {
+
+        padding: 8px;
+
+    }
+
+
+    .card {
+
+        padding: 10px;
+
+    }
+
+
+    .lecturer-table {
+
+        min-width: 500px;
+
+    }
+
+
+    .enter-button {
+
+        width: 100%;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =================================================
+     TITLE
+================================================= -->
+
+<div class="page-title">
+
+    WEEKLY TEST INVIGILATION MANAGEMENT
+
+</div>
+
+
+<div class="card">
+
+
+<!-- =================================================
+     MESSAGE
+================================================= -->
+
+<div id="message"
+     class="message">
+
+</div>
+
+
+<!-- =================================================
+     FIRST TABLE
+================================================= -->
+
+<div id="selectionSection">
+
+
+    <div class="table-wrapper">
+
+        <table class="lecturer-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        S.NO
+                    </th>
+
+                    <th>
+                        LECTURER NAME
+                    </th>
+
+                    <th>
+                        ACTION
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="lecturerList">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <button
+        id="enterButton"
+        class="enter-button"
+        onclick="enterAllocation()">
+
+        ENTER
+
+    </button>
+
+
+</div>
+
+
+<!-- =================================================
+     RESULT TABLE
+================================================= -->
+
+<div id="resultSection">
+
+
+    <div class="table-wrapper">
+
+        <table class="lecturer-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        S.NO
+                    </th>
+
+                    <th>
+                        LECTURER NAME
+                    </th>
+
+                    <th>
+                        SECTION NAME
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="allocationList">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <button
+        class="back-button"
+        onclick="goBack()">
+
+        BACK
+
+    </button>
+
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let lecturers = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text, type) {
+
+    const box =
+        document.getElementById(
+            "message"
+        );
+
+
+    box.textContent =
+        text;
+
+
+    box.className =
+        "message " + type;
+
+
+    setTimeout(function() {
+
+        box.className =
+            "message";
+
+    }, 5000);
+
+}
+
+
+/* =====================================================
+   LOAD LECTURERS
+===================================================== */
+
+async function loadLecturers() {
+
+    const list =
+        document.getElementById(
+            "lecturerList"
+        );
+
+
+    try {
+
+        list.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="empty">
+
+                    Loading...
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        const response =
+            await fetch(
+                "/api/lecturer-allocation/lecturers"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load lecturers."
+            );
+
+        }
+
+
+        lecturers =
+            data.lecturers || [];
+
+
+        renderLecturers();
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+
+        list.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="empty">
+
+                    Unable to load lecturers.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER LECTURERS
+===================================================== */
+
+function renderLecturers() {
+
+    const list =
+        document.getElementById(
+            "lecturerList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    if (!lecturers.length) {
+
+        list.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="empty">
+
+                    No lecturers available.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    lecturers.forEach(
+        function(lecturer, index) {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            tr.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        lecturer
+                    )}
+                </td>
+
+                <td>
+
+                    <button
+                        class="remove-button"
+                        onclick="removeLecturer(${index})">
+
+                        REMOVE
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+            list.appendChild(tr);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   REMOVE FROM TABLE
+===================================================== */
+
+function removeLecturer(index) {
+
+    if (
+        index < 0 ||
+        index >= lecturers.length
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+
+       IMPORTANT:
+
+       This only removes the lecturer
+       from the JavaScript array.
+
+       Database is NOT changed.
+
+    */
+
+    lecturers.splice(
+        index,
+        1
+    );
+
+
+    renderLecturers();
+
+
+    showMessage(
+        "Lecturer removed from the allocation list.",
+        "success"
+    );
+
+}
+
+
+/* =====================================================
+   ENTER
+===================================================== */
+
+async function enterAllocation() {
+
+    if (!lecturers.length) {
+
+        showMessage(
+
+            "No lecturers available for allocation.",
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "enterButton"
+        );
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "PROCESSING";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/lecturer-allocation",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            lecturers:
+                                lecturers
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+
+                result.message ||
+                "Unable to allocate sections."
+
+            );
+
+        }
+
+
+        /* =========================================
+           SHOW RESULT
+        ========================================= */
+
+        renderAllocation(
+            result.allocations || []
+        );
+
+
+        document
+            .getElementById(
+                "selectionSection"
+            )
+            .style.display =
+                "none";
+
+
+        document
+            .getElementById(
+                "resultSection"
+            )
+            .style.display =
+                "block";
+
+
+        showMessage(
+
+            "Sections allocated successfully.",
+
+            "success"
+
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Server error.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            "ENTER";
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER ALLOCATION
+===================================================== */
+
+function renderAllocation(
+    allocations
+) {
+
+    const list =
+        document.getElementById(
+            "allocationList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    if (!allocations.length) {
+
+        list.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="3"
+                    class="empty">
+
+                    No allocation generated.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    allocations.forEach(
+        function(row, index) {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            let sectionHTML;
+
+
+            if (
+                row.section_name === null ||
+                row.section_name === undefined
+            ) {
+
+                sectionHTML =
+                    `<span class="null-value">
+                        NULL
+                     </span>`;
+
+            }
+
+            else {
+
+                sectionHTML =
+                    escapeHTML(
+                        row.section_name
+                    );
+
+            }
+
+
+            tr.innerHTML = `
+
+                <td>
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${escapeHTML(
+                        row.lecturer_name
+                    )}
+                </td>
+
+                <td>
+                    ${sectionHTML}
+                </td>
+
+            `;
+
+
+            list.appendChild(tr);
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   BACK
+===================================================== */
+
+function goBack() {
+
+    document
+        .getElementById(
+            "resultSection"
+        )
+        .style.display =
+            "none";
+
+
+    document
+        .getElementById(
+            "selectionSection"
+        )
+        .style.display =
+            "block";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        value ?? "";
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   LOAD ON PAGE START
+===================================================== */
+
+loadLecturers();
+
+</script>
+
+</body>
+
+</html>

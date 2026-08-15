@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Timetable</title>
+
+
+<style>
+
+/* =================================
+   RESET
+================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+/* =================================
+   BODY
+================================= */
+
+body {
+
+    min-height: 100vh;
+
+    background: #eef5fb;
+
+    color: #222;
+
+    padding: 15px;
+
+}
+
+
+/* =================================
+   PAGE TITLE
+================================= */
+
+.page-title {
+
+    background: white;
+
+    border: 1px solid #c2d4e5;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* =================================
+   CARD
+================================= */
+
+.card {
+
+    background: white;
+
+    border: 1px solid #c5c5c5;
+
+    padding: 20px;
+
+    width: 100%;
+
+    margin: auto;
+
+}
+
+
+/* =================================
+   SEARCH SECTION
+================================= */
+
+.search-section {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 5px;
+
+    position: relative;
+
+}
+
+
+.class-input {
+
+    flex: 1;
+
+    height: 38px;
+
+    border: 1px solid #aaa;
+
+    padding: 0 12px;
+
+    font-size: 13px;
+
+    outline: none;
+
+}
+
+
+.class-input:focus {
+
+    border-color: #4a91c7;
+
+}
+
+
+.search-button {
+
+    width: 80px;
+
+    height: 38px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+
+}
+
+
+.search-button:hover {
+
+    background: #357fae;
+
+}
+
+
+/* =================================
+   SUGGESTIONS
+================================= */
+
+.suggestions {
+
+    position: absolute;
+
+    left: 0;
+
+    top: 40px;
+
+    width: calc(100% - 88px);
+
+    background: white;
+
+    border: 1px solid #bbb;
+
+    z-index: 100;
+
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+
+}
+
+
+.suggestion-item {
+
+    padding: 9px 12px;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #eee;
+
+}
+
+
+.suggestion-item:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.suggestion-item:hover {
+
+    background: #dceefa;
+
+}
+
+
+/* =================================
+   SELECTED CLASS
+================================= */
+
+.selected-class {
+
+    margin-top: 15px;
+
+    margin-bottom: 10px;
+
+    padding: 8px 10px;
+
+    background: #d9e8f3;
+
+    border: 1px solid #b9ccd9;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+}
+
+
+/* =================================
+   MESSAGE
+================================= */
+
+.message {
+
+    padding: 9px;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+
+    display: none;
+
+}
+
+
+.message.success {
+
+    display: block;
+
+    background: #e1f3e5;
+
+    border: 1px solid #9ac9a3;
+
+    color: #256333;
+
+}
+
+
+.message.error {
+
+    display: block;
+
+    background: #f9e1e1;
+
+    border: 1px solid #d49a9a;
+
+    color: #9b2222;
+
+}
+
+
+/* =================================
+   TABLE WRAPPER
+================================= */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #aaa;
+
+}
+
+
+/* =================================
+   TIMETABLE
+================================= */
+
+.timetable {
+
+    width: 100%;
+
+    min-width: 1000px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+}
+
+
+/* =================================
+   TABLE HEADER
+================================= */
+
+.timetable th {
+
+    background: #d7e6f2;
+
+    border: 1px solid #aaa;
+
+    padding: 8px 5px;
+
+    text-align: center;
+
+    font-size: 10px;
+
+    color: #244b6b;
+
+}
+
+
+/* =================================
+   DAY COLUMN
+================================= */
+
+.day-cell {
+
+    width: 95px;
+
+    background: #e9f1f7;
+
+    font-weight: bold;
+
+    font-size: 10px;
+
+    text-align: center;
+
+}
+
+
+/* =================================
+   NORMAL CELL
+================================= */
+
+.timetable td {
+
+    border: 1px solid #aaa;
+
+    padding: 5px;
+
+    vertical-align: top;
+
+    text-align: center;
+
+    height: 105px;
+
+}
+
+
+/* =================================
+   CELL CONTENT
+================================= */
+
+.cell-content {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+
+
+/* =================================
+   SUBJECT INPUT
+================================= */
+
+.subject-input {
+
+    width: 100%;
+
+    height: 34px;
+
+    border: 1px solid #aaa;
+
+    padding: 5px;
+
+    font-size: 10px;
+
+    text-align: center;
+
+    outline: none;
+
+}
+
+
+.subject-input:focus {
+
+    border-color: #4a91c7;
+
+    background: #f5fbff;
+
+}
+
+
+/* =================================
+   ROOM INPUT
+================================= */
+
+.room-input {
+
+    width: 100%;
+
+    height: 28px;
+
+    border: 1px solid #bbb;
+
+    padding: 4px;
+
+    font-size: 9px;
+
+    text-align: center;
+
+    outline: none;
+
+    background: #f7f7f7;
+
+}
+
+
+.room-input:focus {
+
+    border-color: #4a91c7;
+
+    background: white;
+
+}
+
+
+/* =================================
+   NULL TEXT
+================================= */
+
+.null-placeholder {
+
+    color: #888;
+
+}
+
+
+/* =================================
+   SAVE AREA
+================================= */
+
+.save-area {
+
+    margin-top: 15px;
+
+    text-align: center;
+
+}
+
+
+.save-button {
+
+    min-width: 120px;
+
+    height: 38px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+
+}
+
+
+.save-button:hover {
+
+    background: #357fae;
+
+}
+
+
+.save-button:disabled {
+
+    background: #aaa;
+
+    border-color: #999;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =================================
+   HIDDEN
+================================= */
+
+.hidden {
+
+    display: none;
+
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media(max-width:600px) {
+
+    body {
+
+        padding: 8px;
+
+    }
+
+
+    .card {
+
+        padding: 10px;
+
+    }
+
+
+    .class-input {
+
+        font-size: 11px;
+
+    }
+
+
+    .search-button {
+
+        width: 60px;
+
+        font-size: 10px;
+
+    }
+
+
+    .suggestions {
+
+        width: calc(100% - 68px);
+
+    }
+
+
+    .timetable {
+
+        min-width: 850px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =================================
+     PAGE TITLE
+================================= -->
+
+<div class="page-title">
+
+    TIME TABLE MANAGEMENT
+
+</div>
+
+
+<!-- =================================
+     CARD
+================================= -->
+
+<div class="card">
+
+
+    <!-- =================================
+         MESSAGE
+    ================================= -->
+
+    <div id="message"
+         class="message">
+    </div>
+
+
+    <!-- =================================
+         SEARCH
+    ================================= -->
+
+    <div class="search-section">
+
+
+        <input
+            type="text"
+            id="classInput"
+            class="class-input"
+            placeholder="Enter class name"
+            autocomplete="off">
+
+
+        <button
+            class="search-button"
+            onclick="searchClass()">
+
+            SEARCH
+
+        </button>
+
+
+        <!-- SUGGESTIONS -->
+
+        <div
+            id="suggestions"
+            class="suggestions hidden">
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================
+         SELECTED CLASS
+    ================================= -->
+
+    <div
+        id="selectedClass"
+        class="selected-class hidden">
+
+    </div>
+
+
+    <!-- =================================
+         TABLE
+    ================================= -->
+
+    <div
+        id="tableArea"
+        class="hidden">
+
+
+        <div class="table-wrapper">
+
+
+            <table
+                class="timetable"
+                id="timetableTable">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            DAY
+                        </th>
+
+                        <th>
+                            PERIOD 1
+                        </th>
+
+                        <th>
+                            PERIOD 2
+                        </th>
+
+                        <th>
+                            PERIOD 3
+                        </th>
+
+                        <th>
+                            PERIOD 4
+                        </th>
+
+                        <th>
+                            PERIOD 5
+                        </th>
+
+                        <th>
+                            PERIOD 6
+                        </th>
+
+                        <th>
+                            PERIOD 7
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tableBody">
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+        <!-- =================================
+             SAVE
+        ================================= -->
+
+        <div class="save-area">
+
+            <button
+                id="saveButton"
+                class="save-button"
+                onclick="saveTimetable()">
+
+                SAVE
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =================================
+   VARIABLES
+================================= */
+
+let selectedClass = "";
+
+let classes = [];
+
+
+const days = [
+
+    "Monday",
+
+    "Tuesday",
+
+    "Wednesday",
+
+    "Thursday",
+
+    "Friday",
+
+    "Saturday"
+
+];
+
+
+const periods = [
+
+    1,
+
+    2,
+
+    3,
+
+    4,
+
+    5,
+
+    6,
+
+    7
+
+];
+
+
+
+/* =================================
+   MESSAGE
+================================= */
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById("message");
+
+
+    message.textContent = text;
+
+
+    message.className =
+        "message " + type;
+
+
+    setTimeout(function() {
+
+        message.className = "message";
+
+    }, 3000);
+
+}
+
+
+
+/* =================================
+   LOAD CLASS NAMES
+================================= */
+
+async function loadClasses() {
+
+    try {
+
+        const response =
+            await fetch("/api/classes");
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load classes"
+            );
+
+        }
+
+
+        classes =
+            await response.json();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to load class names",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =================================
+   CLASS INPUT
+================================= */
+
+document
+    .getElementById("classInput")
+    .addEventListener(
+        "input",
+        function() {
+
+            showSuggestions();
+
+        }
+    );
+
+
+
+/* =================================
+   SHOW SUGGESTIONS
+================================= */
+
+function showSuggestions() {
+
+    const input =
+        document.getElementById("classInput");
+
+
+    const box =
+        document.getElementById("suggestions");
+
+
+    const value =
+        input.value.trim().toLowerCase();
+
+
+    box.innerHTML = "";
+
+
+    if (!value) {
+
+        box.classList.add("hidden");
+
+        return;
+
+    }
+
+
+    const filtered =
+        classes.filter(function(className) {
+
+            return className
+                .toLowerCase()
+                .startsWith(value);
+
+        });
+
+
+    if (filtered.length === 0) {
+
+        box.classList.add("hidden");
+
+        return;
+
+    }
+
+
+    filtered.forEach(function(className) {
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "suggestion-item";
+
+
+        item.textContent =
+            className;
+
+
+        item.onclick =
+            function() {
+
+                selectClass(className);
+
+            };
+
+
+        box.appendChild(item);
+
+    });
+
+
+    box.classList.remove("hidden");
+
+}
+
+
+
+/* =================================
+   SELECT SUGGESTION
+================================= */
+
+function selectClass(className) {
+
+    document
+        .getElementById("classInput")
+        .value = className;
+
+
+    document
+        .getElementById("suggestions")
+        .classList.add("hidden");
+
+
+    searchClass();
+
+}
+
+
+
+/* =================================
+   SEARCH CLASS
+================================= */
+
+async function searchClass() {
+
+    const input =
+        document.getElementById("classInput");
+
+
+    const className =
+        input.value.trim();
+
+
+    if (!className) {
+
+        showMessage(
+            "Please enter a class name",
+            "error"
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    /* Check class exists */
+
+    const exists =
+        classes.some(function(name) {
+
+            return name.toLowerCase() ===
+                   className.toLowerCase();
+
+        });
+
+
+    if (!exists) {
+
+        showMessage(
+            "Class does not exist",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    /* Use actual class-name casing */
+
+    selectedClass =
+        classes.find(function(name) {
+
+            return name.toLowerCase() ===
+                   className.toLowerCase();
+
+        });
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/timetable/class/" +
+                encodeURIComponent(selectedClass)
+            );
+
+
+        if (!response.ok) {
+
+            const result =
+                await response.json();
+
+            throw new Error(
+                result.message ||
+                "Unable to load timetable"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        buildTable(data);
+
+
+        const selected =
+            document.getElementById(
+                "selectedClass"
+            );
+
+
+        selected.textContent =
+            "CLASS: " + selectedClass;
+
+
+        selected.classList.remove(
+            "hidden"
+        );
+
+
+        document
+            .getElementById("tableArea")
+            .classList.remove("hidden");
+
+
+        showMessage(
+            "Timetable loaded successfully",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Unable to load timetable",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =================================
+   BUILD TABLE
+================================= */
+
+function buildTable(data) {
+
+    const body =
+        document.getElementById("tableBody");
+
+
+    body.innerHTML = "";
+
+
+    days.forEach(function(day) {
+
+
+        const row =
+            document.createElement("tr");
+
+
+        /* DAY */
+
+        const dayCell =
+            document.createElement("td");
+
+
+        dayCell.className =
+            "day-cell";
+
+
+        dayCell.textContent =
+            day;
+
+
+        row.appendChild(dayCell);
+
+
+        /* PERIODS */
+
+        periods.forEach(function(period) {
+
+
+            const cell =
+                document.createElement("td");
+
+
+            const wrapper =
+                document.createElement("div");
+
+
+            wrapper.className =
+                "cell-content";
+
+
+            /* Find database record */
+
+            const record =
+                data.find(function(item) {
+
+                    return item.day === day &&
+                           Number(item.period_no) ===
+                           period;
+
+                });
+
+
+            let subject = null;
+
+            let room = null;
+
+
+            if (record) {
+
+                subject =
+                    record.subject;
+
+                room =
+                    record.room_name;
+
+            }
+
+
+            /* =====================
+               SUBJECT
+            ====================== */
+
+            const subjectInput =
+                document.createElement("input");
+
+
+            subjectInput.type =
+                "text";
+
+
+            subjectInput.className =
+                "subject-input";
+
+
+            subjectInput.placeholder =
+                "NULL";
+
+
+            subjectInput.value =
+                subject || "";
+
+
+            subjectInput.dataset.day =
+                day;
+
+
+            subjectInput.dataset.period =
+                period;
+
+
+            subjectInput.dataset.type =
+                "subject";
+
+
+            /* =====================
+               ROOM
+            ====================== */
+
+            const roomInput =
+                document.createElement("input");
+
+
+            roomInput.type =
+                "text";
+
+
+            roomInput.className =
+                "room-input";
+
+
+            roomInput.placeholder =
+                "NULL";
+
+
+            roomInput.value =
+                room || "";
+
+
+            roomInput.dataset.day =
+                day;
+
+
+            roomInput.dataset.period =
+                period;
+
+
+            roomInput.dataset.type =
+                "room";
+
+
+            /* =====================
+               ADD
+            ====================== */
+
+            wrapper.appendChild(
+                subjectInput
+            );
+
+
+            wrapper.appendChild(
+                roomInput
+            );
+
+
+            cell.appendChild(
+                wrapper
+            );
+
+
+            row.appendChild(cell);
+
+        });
+
+
+        body.appendChild(row);
+
+    });
+
+}
+
+
+
+/* =================================
+   SAVE TIMETABLE
+================================= */
+
+async function saveTimetable() {
+
+    if (!selectedClass) {
+
+        showMessage(
+            "Please search for a class first",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    saveButton.disabled = true;
+
+    saveButton.textContent =
+        "SAVING...";
+
+
+    const records = [];
+
+
+    const rows =
+        document.querySelectorAll(
+            "#tableBody tr"
+        );
+
+
+    rows.forEach(function(row) {
+
+
+        const subjectInputs =
+            row.querySelectorAll(
+                ".subject-input"
+            );
+
+
+        const roomInputs =
+            row.querySelectorAll(
+                ".room-input"
+            );
+
+
+        subjectInputs.forEach(
+            function(subjectInput, index) {
+
+
+                const roomInput =
+                    roomInputs[index];
+
+
+                records.push({
+
+                    day:
+                        subjectInput.dataset.day,
+
+                    period_no:
+                        Number(
+                            subjectInput.dataset.period
+                        ),
+
+                    subject:
+                        subjectInput.value.trim()
+                        || null,
+
+                    room_name:
+                        roomInput.value.trim()
+                        || null
+
+                });
+
+            }
+        );
+
+    });
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                "/api/timetable/class/" +
+                encodeURIComponent(
+                    selectedClass
+                ),
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        timetable:
+                            records
+
+                    })
+
+                }
+
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.message ||
+                "Unable to save timetable"
+            );
+
+        }
+
+
+        showMessage(
+            "Timetable saved successfully",
+            "success"
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Server error",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        saveButton.disabled = false;
+
+        saveButton.textContent =
+            "SAVE";
+
+    }
+
+}
+
+
+
+/* =================================
+   CLOSE SUGGESTIONS
+================================= */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const searchSection =
+            document.querySelector(
+                ".search-section"
+            );
+
+        if (!searchSection.contains(
+            event.target
+        )) {
+
+            document
+                .getElementById("suggestions")
+                .classList.add("hidden");
+
+        }
+
+    }
+);
+
+
+/* ENTER KEY */
+
+document
+    .getElementById("classInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                searchClass();
+
+            }
+
+        }
+    );
+
+
+/* INITIAL LOAD */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        loadClasses();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

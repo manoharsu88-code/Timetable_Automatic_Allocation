@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Weekly Test</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #eef5fb;
+    color: #222;
+    padding: 15px;
+}
+
+.page-title {
+    background: white;
+    border: 1px solid #c2d4e5;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #244b6b;
+    margin-bottom: 15px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #c5c5c5;
+    padding: 20px;
+    width: 100%;
+}
+
+.form-section {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.input-wrapper {
+    flex: 1;
+}
+
+.input-wrapper label {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #244b6b;
+    margin-bottom: 5px;
+}
+
+.input-wrapper input {
+    width: 100%;
+    height: 38px;
+    border: 1px solid #aaa;
+    padding: 0 10px;
+    font-size: 12px;
+    outline: none;
+}
+
+.input-wrapper input:focus {
+    border-color: #4a91c7;
+}
+
+.save-button {
+    width: 80px;
+    height: 38px;
+    margin-top: 17px;
+
+    border: 1px solid #397aaa;
+    background: #4b9bd0;
+    color: white;
+
+    font-size: 11px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background: #357fae;
+}
+
+.save-button:disabled {
+    background: #999;
+    border-color: #888;
+    cursor: not-allowed;
+}
+
+.message {
+    display: none;
+    padding: 9px;
+    margin-bottom: 12px;
+    font-size: 11px;
+}
+
+.message.success {
+    display: block;
+    background: #e1f3e5;
+    border: 1px solid #9ac9a3;
+    color: #256333;
+}
+
+.message.error {
+    display: block;
+    background: #f9e1e1;
+    border: 1px solid #d49a9a;
+    color: #9b2222;
+}
+
+.info {
+    margin-top: 18px;
+    padding: 10px;
+    background: #f3f8fc;
+    border: 1px solid #c5dceb;
+    color: #244b6b;
+    font-size: 11px;
+}
+
+@media(max-width:600px) {
+
+    body {
+        padding: 8px;
+    }
+
+    .card {
+        padding: 10px;
+    }
+
+    .form-section {
+        flex-direction: column;
+    }
+
+    .input-wrapper {
+        width: 100%;
+    }
+
+    .save-button {
+        width: 100%;
+        margin-top: 0;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="page-title">
+    WEEKLY TEST SHEDULE
+</div>
+
+<div class="card">
+
+    <div id="message"
+         class="message">
+    </div>
+
+    <div class="form-section">
+
+        <!-- DAY -->
+
+        <div class="input-wrapper">
+
+            <label for="dayInput">
+                DAY
+            </label>
+
+            <input
+                type="text"
+                id="dayInput"
+                placeholder="Monday"
+                autocomplete="off">
+
+        </div>
+
+
+        <!-- FROM -->
+
+        <div class="input-wrapper">
+
+            <label for="fromInput">
+                FROM PERIOD
+            </label>
+
+            <input
+                type="number"
+                id="fromInput"
+                placeholder="1"
+                min="1"
+                max="7">
+
+        </div>
+
+
+        <!-- TO -->
+
+        <div class="input-wrapper">
+
+            <label for="toInput">
+                TO PERIOD
+            </label>
+
+            <input
+                type="number"
+                id="toInput"
+                placeholder="7"
+                min="1"
+                max="7">
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <button
+            id="saveButton"
+            class="save-button"
+            onclick="saveWeeklyTest()">
+
+            SAVE
+
+        </button>
+
+    </div>
+
+
+    <div class="info">
+
+        Example:
+        Monday + From 2 + To 4
+        will change Monday periods
+        2, 3 and 4 to
+        <b>Weekly Test</b>
+        in every section.
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text, type) {
+
+    const box =
+        document.getElementById("message");
+
+    box.textContent = text;
+
+    box.className =
+        "message " + type;
+
+    setTimeout(function() {
+
+        box.className =
+            "message";
+
+    }, 6000);
+
+}
+
+
+/* =====================================================
+   DAY INPUT
+===================================================== */
+
+document
+    .getElementById("dayInput")
+    .addEventListener(
+        "input",
+        function() {
+
+            this.value =
+                this.value
+                    .replace(
+                        /[^a-zA-Z]/g,
+                        ""
+                    );
+
+        }
+    );
+
+
+/* =====================================================
+   SAVE
+===================================================== */
+
+async function saveWeeklyTest() {
+
+    const dayInput =
+        document.getElementById(
+            "dayInput"
+        );
+
+    const fromInput =
+        document.getElementById(
+            "fromInput"
+        );
+
+    const toInput =
+        document.getElementById(
+            "toInput"
+        );
+
+    const button =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    const day =
+        dayInput.value.trim();
+
+    const fromPeriod =
+        Number(fromInput.value);
+
+    const toPeriod =
+        Number(toInput.value);
+
+
+    /* =============================================
+       VALIDATE DAY
+    ============================================= */
+
+    const validDays = [
+
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+
+    ];
+
+
+    const actualDay =
+        validDays.find(
+            function(item) {
+
+                return item.toLowerCase()
+                    === day.toLowerCase();
+
+            }
+        );
+
+
+    if (!actualDay) {
+
+        showMessage(
+            "Invalid day. Please enter Monday to Saturday.",
+            "error"
+        );
+
+        dayInput.focus();
+
+        return;
+
+    }
+
+
+    /* =============================================
+       VALIDATE FROM
+    ============================================= */
+
+    if (
+        !Number.isInteger(fromPeriod) ||
+        fromPeriod < 1 ||
+        fromPeriod > 7
+    ) {
+
+        showMessage(
+            "From period must be between 1 and 7.",
+            "error"
+        );
+
+        fromInput.focus();
+
+        return;
+
+    }
+
+
+    /* =============================================
+       VALIDATE TO
+    ============================================= */
+
+    if (
+        !Number.isInteger(toPeriod) ||
+        toPeriod < 1 ||
+        toPeriod > 7
+    ) {
+
+        showMessage(
+            "To period must be between 1 and 7.",
+            "error"
+        );
+
+        toInput.focus();
+
+        return;
+
+    }
+
+
+    /* =============================================
+       FROM MUST BE <= TO
+    ============================================= */
+
+    if (fromPeriod > toPeriod) {
+
+        showMessage(
+            "From period must be less than or equal to To period.",
+            "error"
+        );
+
+        fromInput.focus();
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "SAVING";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/weekly-test",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            day:
+                                actualDay,
+
+                            from_period:
+                                fromPeriod,
+
+                            to_period:
+                                toPeriod
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            showMessage(
+                result.message ||
+                "Unable to save weekly test.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+
+            result.message ||
+            "Weekly Test updated successfully.",
+
+            "success"
+
+        );
+
+
+        /* Clear inputs */
+
+        dayInput.value = "";
+
+        fromInput.value = "";
+
+        toInput.value = "";
+
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Server error while updating timetable.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            "SAVE";
+
+    }
+
+}
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+document
+    .getElementById("toInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                saveWeeklyTest();
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>

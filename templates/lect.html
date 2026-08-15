@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Lecturer Timetable</title>
+
+<style>
+
+/* =================================
+   RESET
+================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+/* =================================
+   BODY
+================================= */
+
+body {
+
+    min-height: 100vh;
+
+    background: #eef5fb;
+
+    color: #222;
+
+    padding: 15px;
+}
+
+
+/* =================================
+   TITLE
+================================= */
+
+.page-title {
+
+    background: white;
+
+    border: 1px solid #c2d4e5;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 15px;
+}
+
+
+/* =================================
+   CARD
+================================= */
+
+.card {
+
+    background: white;
+
+    border: 1px solid #c5c5c5;
+
+    padding: 20px;
+
+    width: 100%;
+}
+
+
+/* =================================
+   SEARCH
+================================= */
+
+.search-section {
+
+    display: flex;
+
+    gap: 8px;
+
+    position: relative;
+
+    margin-bottom: 15px;
+}
+
+
+.lecturer-input {
+
+    flex: 1;
+
+    height: 38px;
+
+    border: 1px solid #aaa;
+
+    padding: 0 12px;
+
+    font-size: 13px;
+
+    outline: none;
+}
+
+
+.lecturer-input:focus {
+
+    border-color: #4a91c7;
+}
+
+
+.search-button {
+
+    width: 80px;
+
+    height: 38px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+}
+
+
+.search-button:hover {
+
+    background: #357fae;
+}
+
+
+.search-button:disabled {
+
+    background: #aaa;
+
+    border-color: #999;
+
+    cursor: not-allowed;
+}
+
+
+/* =================================
+   SUGGESTIONS
+================================= */
+
+.suggestions {
+
+    position: absolute;
+
+    left: 0;
+
+    top: 40px;
+
+    width: calc(100% - 88px);
+
+    max-height: 200px;
+
+    overflow-y: auto;
+
+    background: white;
+
+    border: 1px solid #bbb;
+
+    z-index: 100;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,0.15);
+}
+
+
+.suggestion-item {
+
+    padding: 9px 12px;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid #eee;
+}
+
+
+.suggestion-item:hover {
+
+    background: #dceefa;
+}
+
+
+/* =================================
+   MESSAGE
+================================= */
+
+.message {
+
+    display: none;
+
+    padding: 9px;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+}
+
+
+.message.success {
+
+    display: block;
+
+    background: #e1f3e5;
+
+    border: 1px solid #9ac9a3;
+
+    color: #256333;
+}
+
+
+.message.error {
+
+    display: block;
+
+    background: #f9e1e1;
+
+    border: 1px solid #d49a9a;
+
+    color: #9b2222;
+}
+
+
+/* =================================
+   SELECTED LECTURER
+================================= */
+
+.selected-lecturer {
+
+    padding: 8px 10px;
+
+    margin-bottom: 12px;
+
+    background: #d9e8f3;
+
+    border: 1px solid #b9ccd9;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+}
+
+
+/* =================================
+   TOTAL PERIODS
+================================= */
+
+.total-periods {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 12px;
+
+    margin-bottom: 12px;
+
+    background: #f5f9fc;
+
+    border: 1px solid #c5d8e6;
+}
+
+
+.total-periods-title {
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+}
+
+
+.total-periods-value {
+
+    min-width: 45px;
+
+    padding: 6px 10px;
+
+    background: #4b9bd0;
+
+    border: 1px solid #397aaa;
+
+    color: white;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    border-radius: 2px;
+}
+
+
+/* =================================
+   SUBJECT INFORMATION
+================================= */
+
+.subject-info {
+
+    margin-bottom: 12px;
+
+    padding: 8px 10px;
+
+    background: #f5f9fc;
+
+    border: 1px solid #d1dfe9;
+
+    font-size: 11px;
+}
+
+
+.subject-title {
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 6px;
+}
+
+
+.subject-list {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+}
+
+
+.subject-tag {
+
+    padding: 4px 8px;
+
+    background: #dceefa;
+
+    border: 1px solid #a9c8dc;
+
+    color: #244b6b;
+
+    font-size: 10px;
+
+    font-weight: bold;
+}
+
+
+/* =================================
+   TABLE WRAPPER
+================================= */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #aaa;
+}
+
+
+/* =================================
+   TABLE
+================================= */
+
+.timetable {
+
+    width: 100%;
+
+    min-width: 850px;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+
+/* =================================
+   HEADER
+================================= */
+
+.timetable th {
+
+    background: #d7e6f2;
+
+    border: 1px solid #aaa;
+
+    padding: 9px 5px;
+
+    text-align: center;
+
+    font-size: 10px;
+
+    color: #244b6b;
+
+    font-weight: bold;
+}
+
+
+/* =================================
+   CELLS
+================================= */
+
+.timetable td {
+
+    border: 1px solid #aaa;
+
+    height: 90px;
+
+    padding: 5px;
+
+    text-align: center;
+
+    vertical-align: middle;
+}
+
+
+/* =================================
+   DAY
+================================= */
+
+.day-cell {
+
+    width: 95px;
+
+    background: #e9f1f7;
+
+    font-weight: bold;
+
+    font-size: 10px;
+
+    color: #244b6b;
+}
+
+
+/* =================================
+   SECTION BOX
+================================= */
+
+.section-box {
+
+    display: block;
+
+    background: #dceefa;
+
+    border: 1px solid #8bb8d6;
+
+    padding: 6px 4px;
+
+    margin: 3px 0;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    border-radius: 2px;
+}
+
+
+/* =================================
+   EMPTY
+================================= */
+
+.empty-cell {
+
+    color: #aaa;
+
+    font-size: 10px;
+}
+
+
+/* =================================
+   HIDDEN
+================================= */
+
+.hidden {
+
+    display: none !important;
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media(max-width:600px) {
+
+    body {
+
+        padding: 8px;
+    }
+
+
+    .card {
+
+        padding: 10px;
+    }
+
+
+    .lecturer-input {
+
+        font-size: 11px;
+    }
+
+
+    .search-button {
+
+        width: 65px;
+
+        font-size: 10px;
+    }
+
+
+    .suggestions {
+
+        width: calc(100% - 73px);
+    }
+
+
+    .timetable {
+
+        min-width: 800px;
+    }
+
+
+    .section-box {
+
+        font-size: 9px;
+
+        padding: 5px 3px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="page-title">
+
+    LECTURER WORKLOAD INSPECTION
+
+</div>
+
+
+<div class="card">
+
+
+    <!-- MESSAGE -->
+
+    <div id="message"
+         class="message">
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="search-section">
+
+        <input
+            type="text"
+            id="lecturerInput"
+            class="lecturer-input"
+            placeholder="Enter lecturer name"
+            autocomplete="off">
+
+
+        <button
+            id="searchButton"
+            class="search-button"
+            onclick="searchLecturer()">
+
+            SEARCH
+
+        </button>
+
+
+        <div
+            id="suggestions"
+            class="suggestions hidden">
+        </div>
+
+    </div>
+
+
+    <!-- SELECTED LECTURER -->
+
+    <div
+        id="selectedLecturer"
+        class="selected-lecturer hidden">
+    </div>
+
+
+    <!-- =========================================
+         TOTAL PERIODS
+    ========================================== -->
+
+    <div
+        id="totalPeriodsBox"
+        class="total-periods hidden">
+
+        <div class="total-periods-title">
+
+            TOTAL PERIODS IN WEEK
+
+        </div>
+
+
+        <div
+            id="totalPeriodsValue"
+            class="total-periods-value">
+
+            0
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         SUBJECTS
+    ========================================== -->
+
+    <div
+        id="subjectInfo"
+        class="subject-info hidden">
+
+        <div class="subject-title">
+
+            SUBJECTS
+
+        </div>
+
+
+        <div
+            id="subjectList"
+            class="subject-list">
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         TABLE
+    ========================================== -->
+
+    <div
+        id="tableArea"
+        class="hidden">
+
+        <div class="table-wrapper">
+
+            <table
+                id="timetableTable"
+                class="timetable">
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+/* =================================
+   VARIABLES
+================================= */
+
+let lecturers = [];
+
+let selectedLecturer = "";
+
+
+/* =================================
+   DAYS
+================================= */
+
+const days = [
+
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+
+];
+
+
+/* =================================
+   PERIODS
+================================= */
+
+const periods = [
+
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+
+];
+
+
+/* =================================
+   MESSAGE
+================================= */
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent = text;
+
+
+    message.className =
+        "message " + type;
+
+
+    setTimeout(function() {
+
+        message.className =
+            "message";
+
+    }, 4000);
+
+}
+
+
+/* =================================
+   LOAD LECTURERS
+================================= */
+
+async function loadLecturers() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/lecturer/suggestions"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load lecturers"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (Array.isArray(data)) {
+
+            lecturers = data;
+
+        }
+
+        else {
+
+            lecturers =
+                data.lecturers || [];
+
+        }
+
+
+        lecturers =
+            [...new Set(lecturers)];
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            "Unable to load lecturer names",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =================================
+   INPUT SUGGESTIONS
+================================= */
+
+document
+    .getElementById("lecturerInput")
+    .addEventListener(
+        "input",
+        showSuggestions
+    );
+
+
+function showSuggestions() {
+
+    const input =
+        document.getElementById(
+            "lecturerInput"
+        );
+
+
+    const box =
+        document.getElementById(
+            "suggestions"
+        );
+
+
+    const value =
+        input.value
+            .trim()
+            .toLowerCase();
+
+
+    box.innerHTML = "";
+
+
+    if (!value) {
+
+        box.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    const filtered =
+        lecturers.filter(
+            function(name) {
+
+                return name
+                    .toLowerCase()
+                    .startsWith(value);
+
+            }
+        );
+
+
+    if (!filtered.length) {
+
+        box.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    filtered.forEach(
+        function(name) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "suggestion-item";
+
+
+            item.textContent =
+                name;
+
+
+            item.onclick =
+                function() {
+
+                    document
+                        .getElementById(
+                            "lecturerInput"
+                        )
+                        .value =
+                        name;
+
+
+                    box.classList.add(
+                        "hidden"
+                    );
+
+                };
+
+
+            box.appendChild(item);
+
+        }
+    );
+
+
+    box.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =================================
+   ENTER KEY
+================================= */
+
+document
+    .getElementById("lecturerInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                document
+                    .getElementById(
+                        "suggestions"
+                    )
+                    .classList.add(
+                        "hidden"
+                    );
+
+                searchLecturer();
+
+            }
+
+        }
+    );
+
+
+/* =================================
+   SEARCH LECTURER
+================================= */
+
+async function searchLecturer() {
+
+    const input =
+        document.getElementById(
+            "lecturerInput"
+        );
+
+
+    const button =
+        document.getElementById(
+            "searchButton"
+        );
+
+
+    const lecturer =
+        input.value.trim();
+
+
+    if (!lecturer) {
+
+        showMessage(
+            "Please enter lecturer name",
+            "error"
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    const actualName =
+        lecturers.find(
+            function(name) {
+
+                return name
+                    .toLowerCase() ===
+                    lecturer.toLowerCase();
+
+            }
+        );
+
+
+    if (!actualName) {
+
+        showMessage(
+            "Lecturer does not exist",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    selectedLecturer =
+        actualName;
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "LOADING";
+
+
+    document
+        .getElementById(
+            "tableArea"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "subjectInfo"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    document
+        .getElementById(
+            "totalPeriodsBox"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                "/api/lecturer-timetable/" +
+                encodeURIComponent(
+                    actualName
+                )
+
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load timetable"
+            );
+
+        }
+
+
+        /* =================================
+           SELECTED LECTURER
+        ================================= */
+
+        const selected =
+            document.getElementById(
+                "selectedLecturer"
+            );
+
+
+        selected.textContent =
+            "LECTURER: " +
+            actualName;
+
+
+        selected.classList.remove(
+            "hidden"
+        );
+
+
+        /* =================================
+           SUBJECTS
+        ================================= */
+
+        displaySubjects(
+            data.subjects || []
+        );
+
+
+        /* =================================
+           BUILD TABLE
+        ================================= */
+
+        buildTimetable();
+
+
+        /* =================================
+           FILL TABLE
+        ================================= */
+
+        fillTimetable(
+            data.timetable || {}
+        );
+
+
+        /* =================================
+           COUNT PERIODS
+        ================================= */
+
+        const totalPeriods =
+            countLecturerPeriods(
+                data.timetable || {}
+            );
+
+
+        document
+            .getElementById(
+                "totalPeriodsValue"
+            )
+            .textContent =
+            totalPeriods;
+
+
+        document
+            .getElementById(
+                "totalPeriodsBox"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+
+        /* =================================
+           SHOW TABLE
+        ================================= */
+
+        document
+            .getElementById(
+                "tableArea"
+            )
+            .classList.remove(
+                "hidden"
+            );
+
+
+        showMessage(
+            "Lecturer timetable loaded successfully",
+            "success"
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(error);
+
+        showMessage(
+            error.message ||
+            "Unable to load timetable",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            "SEARCH";
+
+    }
+
+}
+
+
+/* =================================
+   COUNT LECTURER PERIODS
+================================= */
+
+/*
+   timetable format:
+
+   {
+       "11": ["ECM"],
+       "12": ["ECE"],
+       "23": ["AIDS"]
+   }
+
+   Each non-empty location is counted
+   as one period.
+
+   Example:
+
+   11 -> 1
+   12 -> 1
+   23 -> 1
+
+   TOTAL = 3
+*/
+
+function countLecturerPeriods(
+    timetable
+) {
+
+    let total = 0;
+
+
+    for (
+        let day = 1;
+        day <= 6;
+        day++
+    ) {
+
+        for (
+            let period = 1;
+            period <= 7;
+            period++
+        ) {
+
+            const key =
+                `${day}${period}`;
+
+
+            const sections =
+                timetable[key] || [];
+
+
+            /*
+             * If at least one section exists
+             * in this cell, the lecturer is
+             * taking one period.
+             */
+
+            if (
+                Array.isArray(sections) &&
+                sections.length > 0
+            ) {
+
+                total++;
+
+            }
+
+        }
+
+    }
+
+
+    return total;
+
+}
+
+
+/* =================================
+   DISPLAY SUBJECTS
+================================= */
+
+function displaySubjects(subjects) {
+
+    const info =
+        document.getElementById(
+            "subjectInfo"
+        );
+
+
+    const list =
+        document.getElementById(
+            "subjectList"
+        );
+
+
+    list.innerHTML = "";
+
+
+    if (!subjects.length) {
+
+        info.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+
+    const uniqueSubjects =
+        [...new Set(subjects)];
+
+
+    uniqueSubjects.forEach(
+        function(subject) {
+
+            const tag =
+                document.createElement(
+                    "div"
+                );
+
+
+            tag.className =
+                "subject-tag";
+
+
+            tag.textContent =
+                subject;
+
+
+            list.appendChild(tag);
+
+        }
+    );
+
+
+    info.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =================================
+   BUILD TABLE
+================================= */
+
+function buildTimetable() {
+
+    const table =
+        document.getElementById(
+            "timetableTable"
+        );
+
+
+    let html = "";
+
+
+    html += `
+
+        <thead>
+
+            <tr>
+
+                <th>DAY</th>
+
+                <th>PERIOD 1</th>
+
+                <th>PERIOD 2</th>
+
+                <th>PERIOD 3</th>
+
+                <th>PERIOD 4</th>
+
+                <th>PERIOD 5</th>
+
+                <th>PERIOD 6</th>
+
+                <th>PERIOD 7</th>
+
+            </tr>
+
+        </thead>
+
+    `;
+
+
+    html += "<tbody>";
+
+
+    days.forEach(
+        function(day, dayIndex) {
+
+            const dayNumber =
+                dayIndex + 1;
+
+
+            html += "<tr>";
+
+
+            html += `
+
+                <td class="day-cell">
+
+                    ${day}
+
+                </td>
+
+            `;
+
+
+            periods.forEach(
+                function(period) {
+
+                    html += `
+
+                        <td
+                            id="cell-${dayNumber}-${period}">
+
+                            <span
+                                class="empty-cell">
+
+                                NULL
+
+                            </span>
+
+                        </td>
+
+                    `;
+
+                }
+            );
+
+
+            html += "</tr>";
+
+        }
+    );
+
+
+    html += "</tbody>";
+
+
+    table.innerHTML =
+        html;
+
+}
+
+
+/* =================================
+   FILL TABLE
+================================= */
+
+function fillTimetable(
+    timetable
+) {
+
+    for (
+        let day = 1;
+        day <= 6;
+        day++
+    ) {
+
+        for (
+            let period = 1;
+            period <= 7;
+            period++
+        ) {
+
+            const key =
+                `${day}${period}`;
+
+
+            const cell =
+                document.getElementById(
+                    `cell-${day}-${period}`
+                );
+
+
+            if (!cell) {
+
+                continue;
+
+            }
+
+
+            const sections =
+                timetable[key] || [];
+
+
+            cell.innerHTML = "";
+
+
+            if (
+                !Array.isArray(sections) ||
+                sections.length === 0
+            ) {
+
+                cell.innerHTML = `
+
+                    <span
+                        class="empty-cell">
+
+                        NULL
+
+                    </span>
+
+                `;
+
+                continue;
+
+            }
+
+
+            const uniqueSections =
+                [...new Set(sections)];
+
+
+            uniqueSections.forEach(
+                function(section) {
+
+                    const box =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    box.className =
+                        "section-box";
+
+
+                    box.textContent =
+                        section;
+
+
+                    cell.appendChild(box);
+
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =================================
+   CLOSE SUGGESTIONS
+================================= */
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            !event.target.closest(
+                ".search-section"
+            )
+        ) {
+
+            document
+                .getElementById(
+                    "suggestions"
+                )
+                .classList.add(
+                    "hidden"
+                );
+
+        }
+
+    }
+);
+
+
+/* =================================
+   LOAD PAGE
+================================= */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        loadLecturers();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

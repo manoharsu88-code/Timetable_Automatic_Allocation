@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Section Creation</title>
+
+
+<style>
+
+/* =================================
+   RESET
+================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+
+/* =================================
+   BODY
+================================= */
+
+body {
+
+    min-height: 100vh;
+
+    background: #eef5fb;
+
+    color: #222;
+
+    padding: 15px;
+
+}
+
+
+/* =================================
+   PAGE TITLE
+================================= */
+
+.page-title {
+
+    background: white;
+
+    border: 1px solid #c2d4e5;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: #244b6b;
+
+    margin-bottom: 15px;
+
+}
+
+
+/* =================================
+   CARD
+================================= */
+
+.card {
+
+    background: white;
+
+    border: 1px solid #c5c5c5;
+
+    padding: 20px;
+
+    max-width: 850px;
+
+    margin: auto;
+
+}
+
+
+/* =================================
+   ADD SECTION
+================================= */
+
+.add-section {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.class-input {
+
+    flex: 1;
+
+    height: 38px;
+
+    border: 1px solid #aaa;
+
+    padding: 0 12px;
+
+    font-size: 13px;
+
+    outline: none;
+
+}
+
+
+.class-input:focus {
+
+    border-color: #4a91c7;
+
+}
+
+
+.add-button {
+
+    width: 80px;
+
+    border: 1px solid #397aaa;
+
+    background: #4b9bd0;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    border-radius: 2px;
+
+}
+
+
+.add-button:hover {
+
+    background: #357fae;
+
+}
+
+
+/* =================================
+   MESSAGE
+================================= */
+
+.message {
+
+    padding: 9px;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+
+    display: none;
+
+}
+
+
+.message.success {
+
+    display: block;
+
+    background: #e1f3e5;
+
+    border: 1px solid #9ac9a3;
+
+    color: #256333;
+
+}
+
+
+.message.error {
+
+    display: block;
+
+    background: #f9e1e1;
+
+    border: 1px solid #d49a9a;
+
+    color: #9b2222;
+
+}
+
+
+/* =================================
+   LIST TITLE
+================================= */
+
+.list-title {
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    background: #d9e8f3;
+
+    border: 1px solid #b9ccd9;
+
+    padding: 9px;
+
+}
+
+
+/* =================================
+   CLASS LIST
+================================= */
+
+.class-list {
+
+    border-left: 1px solid #ccc;
+
+    border-right: 1px solid #ccc;
+
+    border-bottom: 1px solid #ccc;
+
+}
+
+
+/* =================================
+   CLASS ITEM
+================================= */
+
+.class-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 10px 12px;
+
+    border-bottom: 1px solid #ddd;
+
+    font-size: 12px;
+
+    background: white;
+
+}
+
+
+.class-item:last-child {
+
+    border-bottom: none;
+
+}
+
+
+.class-item:hover {
+
+    background: #f2f8fc;
+
+}
+
+
+/* =================================
+   CLASS NAME
+================================= */
+
+.class-name {
+
+    font-weight: bold;
+
+    color: #333;
+
+}
+
+
+/* =================================
+   DELETE BUTTON
+================================= */
+
+.delete-button {
+
+    border: 1px solid #b44343;
+
+    background: #d9534f;
+
+    color: white;
+
+    padding: 5px 12px;
+
+    cursor: pointer;
+
+    font-size: 10px;
+
+    border-radius: 2px;
+
+}
+
+
+.delete-button:hover {
+
+    background: #b93632;
+
+}
+
+
+/* =================================
+   EMPTY
+================================= */
+
+.empty {
+
+    text-align: center;
+
+    padding: 25px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* =================================
+   LOADING
+================================= */
+
+.loading {
+
+    text-align: center;
+
+    padding: 20px;
+
+    color: #777;
+
+    font-size: 12px;
+
+}
+
+
+/* =================================
+   MOBILE
+================================= */
+
+@media(max-width:600px) {
+
+    body {
+
+        padding: 8px;
+
+    }
+
+
+    .card {
+
+        padding: 12px;
+
+    }
+
+
+    .add-section {
+
+        gap: 5px;
+
+    }
+
+
+    .class-input {
+
+        font-size: 11px;
+
+    }
+
+
+    .add-button {
+
+        width: 60px;
+
+        font-size: 10px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =================================
+     PAGE TITLE
+================================= -->
+
+<div class="page-title">
+
+    Section Creation
+
+</div>
+
+
+<!-- =================================
+     CARD
+================================= -->
+
+<div class="card">
+
+
+    <!-- =============================
+         MESSAGE
+    ============================== -->
+
+    <div id="message"
+         class="message">
+    </div>
+
+
+    <!-- =============================
+         ADD CLASS
+    ============================== -->
+
+    <div class="add-section">
+
+        <input
+            type="text"
+            id="classInput"
+            class="class-input"
+            placeholder="Enter Section name"
+            autocomplete="off">
+
+
+        <button
+            class="add-button"
+            onclick="addClass()">
+
+            ADD
+
+        </button>
+
+    </div>
+
+
+    <!-- =============================
+         LIST TITLE
+    ============================== -->
+
+    <div class="list-title">
+
+        Created Sections
+
+    </div>
+
+
+    <!-- =============================
+         CLASS LIST
+    ============================== -->
+
+    <div
+        id="classList"
+        class="class-list">
+
+        <div class="loading">
+
+            Loading classes...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =================================
+   SHOW MESSAGE
+================================= */
+
+function showMessage(text, type) {
+
+    const message =
+        document.getElementById("message");
+
+
+    message.textContent = text;
+
+
+    message.className =
+        "message " + type;
+
+
+    setTimeout(function() {
+
+        message.className = "message";
+
+    }, 3000);
+
+}
+
+
+
+/* =================================
+   LOAD ALL CLASSES
+================================= */
+
+async function loadClasses() {
+
+    const list =
+        document.getElementById("classList");
+
+
+    try {
+
+        const response =
+            await fetch("/api/classes");
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load sections"
+            );
+
+        }
+
+
+        const classes =
+            await response.json();
+
+
+        list.innerHTML = "";
+
+
+        /* =========================
+           NO CLASSES
+        ========================= */
+
+        if (
+            !Array.isArray(classes) ||
+            classes.length === 0
+        ) {
+
+            list.innerHTML = `
+
+                <div class="empty">
+
+                    No sections created yet.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* =========================
+           DISPLAY CLASSES
+        ========================= */
+
+        classes.forEach(function(className) {
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "class-item";
+
+
+            const name =
+                document.createElement("span");
+
+
+            name.className =
+                "class-name";
+
+
+            name.textContent =
+                className;
+
+
+            const deleteButton =
+                document.createElement("button");
+
+
+            deleteButton.className =
+                "delete-button";
+
+
+            deleteButton.textContent =
+                "DELETE";
+
+
+            deleteButton.onclick =
+                function() {
+
+                    deleteClass(className);
+
+                };
+
+
+            item.appendChild(name);
+
+            item.appendChild(deleteButton);
+
+            list.appendChild(item);
+
+        });
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        list.innerHTML = `
+
+            <div class="empty">
+
+                Unable to load sections.
+
+            </div>
+
+        `;
+
+
+        showMessage(
+            "Unable to connect to server",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =================================
+   ADD CLASS
+================================= */
+
+async function addClass() {
+
+    const input =
+        document.getElementById("classInput");
+
+
+    const className =
+        input.value.trim();
+
+
+    /* =========================
+       EMPTY CHECK
+    ========================= */
+
+    if (!className) {
+
+        showMessage(
+            "Please enter a section name",
+            "error"
+        );
+
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    /* =========================
+       SEND TO FLASK
+    ========================= */
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/classes",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        class_name:
+                            className
+
+                    })
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        /* =========================
+           SERVER ERROR
+        ========================= */
+
+        if (!response.ok) {
+
+            showMessage(
+                result.message ||
+                "Unable to add section",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================= */
+
+        showMessage(
+
+            className +
+            " added successfully — 42 rows created",
+
+            "success"
+
+        );
+
+
+        input.value = "";
+
+
+        await loadClasses();
+
+
+        input.focus();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        showMessage(
+            "Server error",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =================================
+   DELETE CLASS
+================================= */
+
+async function deleteClass(className) {
+
+
+    /* =========================
+       CONFIRM
+    ========================= */
+
+    const confirmed =
+        confirm(
+
+            "Delete " +
+            className +
+            " and all its timetable data?"
+
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                "/api/classes/" +
+                encodeURIComponent(className),
+
+                {
+
+                    method: "DELETE"
+
+                }
+
+            );
+
+
+        const result =
+            await response.json();
+
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        if (!response.ok) {
+
+            showMessage(
+
+                result.message ||
+                "Unable to delete sectio",
+
+                "error"
+
+            );
+
+            return;
+
+        }
+
+
+        /* =========================
+           SUCCESS
+        ========================= */
+
+        showMessage(
+
+            className +
+            " deleted successfully",
+
+            "success"
+
+        );
+
+
+        await loadClasses();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        showMessage(
+            "Server error",
+            "error"
+        );
+
+    }
+
+}
+
+
+
+/* =================================
+   ENTER KEY
+================================= */
+
+document
+    .getElementById("classInput")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                addClass();
+
+            }
+
+        }
+    );
+
+
+
+/* =================================
+   LOAD WHEN PAGE OPENS
+================================= */
+
+window.addEventListener(
+    "load",
+    function() {
+
+        loadClasses();
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
