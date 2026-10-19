@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import random
 from flask import Flask, render_template, request, jsonify, session, redirect
@@ -5,6 +6,257 @@ from flask import Flask, render_template, request, jsonify, session, redirect
 app = Flask(__name__)
 
 app.secret_key = "my-secret-key-123"
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "total.db")
+
+
+def build_total_db(db_path=DB_PATH):
+    # Automatically creates total.db if it does not exist
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    # Drop existing tables to ensure a clean recreation with exact IDs
+    cursor.executescript("""
+    DROP TABLE IF EXISTS timetable;
+    DROP TABLE IF EXISTS subjects;
+    DROP TABLE IF EXISTS lecturers;
+    DROP TABLE IF EXISTS users;
+    """)
+
+    # 1. Create Users Table
+    cursor.execute("""
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL CHECK(role IN ('admin', 'lecturer', 'student'))
+    );
+    """)
+
+    # 2. Create Lecturers Table
+    cursor.execute("""
+    CREATE TABLE lecturers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+        total_periods INTEGER NOT NULL,
+        total_sections INTEGER NOT NULL
+    );
+    """)
+
+    # 3. Create Subjects Table
+    cursor.execute("""
+    CREATE TABLE subjects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subject TEXT NOT NULL,
+        section_name TEXT NOT NULL,
+        lab INTEGER DEFAULT 0
+    );
+    """)
+
+    # 4. Create Timetable Table
+    cursor.execute("""
+    CREATE TABLE timetable (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_name TEXT NOT NULL,
+        subject TEXT,
+        room_name TEXT,
+        day TEXT NOT NULL,
+        period_no INTEGER NOT NULL
+    );
+    """)
+
+    # -------------------------------------------------------------
+    # Insert Data: USERS (3 rows)
+    # -------------------------------------------------------------
+    users_data = [
+        (1, "admin", "admin123", "admin"),
+        (2, "lecturer1", "lecture123", "lecturer"),
+        (3, "student1", "student123", "student"),
+        (4, "test", "123456", "admin"),
+        (5, "test", "123456", "student"),
+        (6, "test", "123456", "lecturer"),
+    ]
+    cursor.executemany(
+        "INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?);",
+        users_data,
+    )
+
+    # -------------------------------------------------------------
+    # Insert Data: LECTURERS (14 rows)
+    # -------------------------------------------------------------
+    lecturers_data = [
+        (15, "DR.H.Devanna", "EDBC", 5, 2),
+        (16, "Mrs K.Kiranmayi", "P&S", 5, 5),
+        (17, "Mrs N.Sudha Mounika", "OOPSJ", 5, 5),
+        (18, "Dr K.Srinivasa Naik", "DCD", 5, 5),
+        (19, "Dr Y.Yogeswara Rao", "ES", 2, 5),
+        (20, "Mrs N.Kanaka mahalakshmi", "UEHV", 5, 5),
+        (21, "Dr.B.Prasad Rao", "EDBC LAB", 3, 5),
+        (22, "Mrs N.Sudha Mounika", "OOPS LAB", 3, 5),
+        (23, "Dr. K. Lakshmi", "PP LAB", 3, 5),
+        (24, "Dr. K. Lakshmi", "COUNSELLING", 1, 1),
+        (25, "Dr. K. Lakshmi", "SPORTS", 1, 1),
+        (26, "Dr. K. Lakshmi", "LIBRARY", 1, 1),
+        (27, "Dr. K. Lakshmi", "INNOVATION PROJECT", 1, 1),
+        (28, "Dr. K. Lakshmi", "AOC/VAC", 1, 1),
+    ]
+    cursor.executemany(
+        "INSERT INTO lecturers (id, name, subject, total_periods, total_sections) VALUES (?, ?, ?, ?, ?);",
+        lecturers_data,
+    )
+
+    # -------------------------------------------------------------
+    # Insert Data: SUBJECTS (14 rows)
+    # -------------------------------------------------------------
+    subjects_data = [
+        (24, "EDBC", "ECM", 2225264652),
+        (25, "ES", "ECM", 2355),
+        (26, "SPORTS", "ECM", 27),
+        (27, "LIBRARY", "ECM", 43),
+        (28, "P&S", "ECM", 1721425657),
+        (29, "EDBC LAB", "ECM", 616365),
+        (30, "AOC/VAC", "ECM", 37),
+        (31, "UEHV", "ECM", 1113343667),
+        (32, "OOPS LAB", "ECM", 121633),
+        (33, "OOPSJ", "ECM", 1415414553),
+        (34, "COUNSELLING", "ECM", 35),
+        (35, "PP LAB", "ECM", 244447),
+        (36, "DCD", "ECM", 5154626466),
+        (37, "EDBC", "CSE", 2736455367),
+    ]
+    cursor.executemany(
+        "INSERT INTO subjects (id, subject, section_name, lab) VALUES (?, ?, ?, ?);",
+        subjects_data,
+    )
+
+    # -------------------------------------------------------------
+    # Insert Data: TIMETABLE (84 rows: 42 for ECM + 42 for CSE)
+    # -------------------------------------------------------------
+    timetable_data = [
+        # --- ECM: Monday (463 - 469) ---
+        (463, "ECM", "UEHV", None, "Monday", 1),
+        (464, "ECM", "OOPS LAB", None, "Monday", 2),
+        (465, "ECM", "UEHV", None, "Monday", 3),
+        (466, "ECM", "OOPSJ", None, "Monday", 4),
+        (467, "ECM", "OOPSJ", None, "Monday", 5),
+        (468, "ECM", "OOPS LAB", None, "Monday", 6),
+        (469, "ECM", "P&S", None, "Monday", 7),
+        # --- ECM: Tuesday (470 - 476) ---
+        (470, "ECM", "P&S", None, "Tuesday", 1),
+        (471, "ECM", "EDBC", None, "Tuesday", 2),
+        (472, "ECM", "ES", None, "Tuesday", 3),
+        (473, "ECM", "PP LAB", None, "Tuesday", 4),
+        (474, "ECM", "EDBC", None, "Tuesday", 5),
+        (475, "ECM", "EDBC", None, "Tuesday", 6),
+        (476, "ECM", "SPORTS", None, "Tuesday", 7),
+        # --- ECM: Wednesday (477 - 483) ---
+        (477, "ECM", "Weekly Test", None, "Wednesday", 1),
+        (478, "ECM", "Weekly Test", None, "Wednesday", 2),
+        (479, "ECM", "OOPS LAB", None, "Wednesday", 3),
+        (480, "ECM", "UEHV", None, "Wednesday", 4),
+        (481, "ECM", "COUNSELLING", None, "Wednesday", 5),
+        (482, "ECM", "UEHV", None, "Wednesday", 6),
+        (483, "ECM", "AOC/VAC", None, "Wednesday", 7),
+        # --- ECM: Thursday (484 - 490) ---
+        (484, "ECM", "OOPSJ", None, "Thursday", 1),
+        (485, "ECM", "P&S", None, "Thursday", 2),
+        (486, "ECM", "LIBRARY", None, "Thursday", 3),
+        (487, "ECM", "PP LAB", None, "Thursday", 4),
+        (488, "ECM", "OOPSJ", None, "Thursday", 5),
+        (489, "ECM", "EDBC", None, "Thursday", 6),
+        (490, "ECM", "PP LAB", None, "Thursday", 7),
+        # --- ECM: Friday (491 - 497) ---
+        (491, "ECM", "DCD", None, "Friday", 1),
+        (492, "ECM", "EDBC", None, "Friday", 2),
+        (493, "ECM", "OOPSJ", None, "Friday", 3),
+        (494, "ECM", "DCD", None, "Friday", 4),
+        (495, "ECM", "ES", None, "Friday", 5),
+        (496, "ECM", "P&S", None, "Friday", 6),
+        (497, "ECM", "P&S", None, "Friday", 7),
+        # --- ECM: Saturday (498 - 504) ---
+        (498, "ECM", "EDBC LAB", None, "Saturday", 1),
+        (499, "ECM", "DCD", None, "Saturday", 2),
+        (500, "ECM", "EDBC LAB", None, "Saturday", 3),
+        (501, "ECM", "DCD", None, "Saturday", 4),
+        (502, "ECM", "EDBC LAB", None, "Saturday", 5),
+        (503, "ECM", "DCD", None, "Saturday", 6),
+        (504, "ECM", "UEHV", None, "Saturday", 7),
+        # --- CSE: Monday (505 - 511) ---
+        (505, "CSE", None, None, "Monday", 1),
+        (506, "CSE", None, None, "Monday", 2),
+        (507, "CSE", None, None, "Monday", 3),
+        (508, "CSE", None, None, "Monday", 4),
+        (509, "CSE", None, None, "Monday", 5),
+        (510, "CSE", None, None, "Monday", 6),
+        (511, "CSE", None, None, "Monday", 7),
+        # --- CSE: Tuesday (512 - 518) ---
+        (512, "CSE", None, None, "Tuesday", 1),
+        (513, "CSE", None, None, "Tuesday", 2),
+        (514, "CSE", None, None, "Tuesday", 3),
+        (515, "CSE", None, None, "Tuesday", 4),
+        (516, "CSE", None, None, "Tuesday", 5),
+        (517, "CSE", None, None, "Tuesday", 6),
+        (518, "CSE", "EDBC", None, "Tuesday", 7),
+        # --- CSE: Wednesday (519 - 525) ---
+        (519, "CSE", "Weekly Test", None, "Wednesday", 1),
+        (520, "CSE", "Weekly Test", None, "Wednesday", 2),
+        (521, "CSE", None, None, "Wednesday", 3),
+        (522, "CSE", None, None, "Wednesday", 4),
+        (523, "CSE", None, None, "Wednesday", 5),
+        (524, "CSE", "EDBC", None, "Wednesday", 6),
+        (525, "CSE", None, None, "Wednesday", 7),
+        # --- CSE: Thursday (526 - 532) ---
+        (526, "CSE", None, None, "Thursday", 1),
+        (527, "CSE", None, None, "Thursday", 2),
+        (528, "CSE", None, None, "Thursday", 3),
+        (529, "CSE", None, None, "Thursday", 4),
+        (530, "CSE", "EDBC", None, "Thursday", 5),
+        (531, "CSE", None, None, "Thursday", 6),
+        (532, "CSE", None, None, "Thursday", 7),
+        # --- CSE: Friday (533 - 539) ---
+        (533, "CSE", None, None, "Friday", 1),
+        (534, "CSE", None, None, "Friday", 2),
+        (535, "CSE", "EDBC", None, "Friday", 3),
+        (536, "CSE", None, None, "Friday", 4),
+        (537, "CSE", None, None, "Friday", 5),
+        (538, "CSE", None, None, "Friday", 6),
+        (539, "CSE", None, None, "Friday", 7),
+        # --- CSE: Saturday (540 - 546) ---
+        (540, "CSE", None, None, "Saturday", 1),
+        (541, "CSE", None, None, "Saturday", 2),
+        (542, "CSE", None, None, "Saturday", 3),
+        (543, "CSE", None, None, "Saturday", 4),
+        (544, "CSE", None, None, "Saturday", 5),
+        (545, "CSE", None, None, "Saturday", 6),
+        (546, "CSE", "EDBC", None, "Saturday", 7),
+    ]
+    cursor.executemany(
+        "INSERT INTO timetable (id, class_name, subject, room_name, day, period_no) VALUES (?, ?, ?, ?, ?, ?);",
+        timetable_data,
+    )
+
+    # -------------------------------------------------------------
+    # Sync sqlite_sequence with exact sequence counters from image
+    # -------------------------------------------------------------
+    cursor.execute("""
+    DELETE FROM sqlite_sequence WHERE name IN ('timetable', 'lecturers', 'subjects', 'users');
+    """)
+    sqlite_sequence_data = [
+        ("timetable", 546),
+        ("lecturers", 28),
+        ("subjects", 37),
+        ("users", 6),
+    ]
+    cursor.executemany(
+        "INSERT INTO sqlite_sequence (name, seq) VALUES (?, ?);",
+        sqlite_sequence_data,
+    )
+
+    conn.commit()
+    conn.close()
+    print(f"total.db successfully generated with exact image data at: {db_path}")
 
 DATABASE = "total.db"
 
@@ -14,6 +266,7 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+build_total_db()
 
 @app.route("/")
 def main():
@@ -4807,6 +5060,7 @@ def delete_lecturer(lecturer_id):
 # ==========================================
 
 if __name__ == "__main__":
+    build_total_db()
 
     app.run(
         host="0.0.0.0",
