@@ -60,9 +60,9 @@ This platform uses a coordinate-based location encoding algorithm (Day-Period ma
                     +---------------------+---------------------+
                     |                                           |
                     v                                           v
-   +---------------------------------+        +-----------------------------------+
-   | Single-Period Theory Allocation |        | 3-Period Lab / Block Allocation   |
-   +----------------+----------------+        +-----------------+-----------------+
+    +---------------------------------+        +-----------------------------------+
+    | Single-Period Theory Allocation |        | 3-Period Lab / Block Allocation   |
+    +----------------+----------------+        +-----------------+-----------------+
                     |                                           |
                     +---------------------+---------------------+
                                           |
@@ -86,8 +86,6 @@ This platform uses a coordinate-based location encoding algorithm (Day-Period ma
                +---------------------------+
                |  Timetable & DB Finalized |
                +---------------------------+
-
-               ---
 
 ## Database Design
 
